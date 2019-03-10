@@ -1,7 +1,7 @@
 # thingsBot
 things! with friends!
 
-##To Play
+## To Play
 
 * *Make sure you have Python 3.6 or newer*
 * run `python3 app.py` in one terminal
