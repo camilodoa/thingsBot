@@ -73,7 +73,7 @@ def receive_message():
                         if message['message'].get('text') == 'start':
                             gameInit = True
                             gameMaster = recipient_id
-                            send_message(gameMaster, 'game is starting --  send me your names!! muahaha')
+                            send_message(gameMaster, "game is starting -- when you're ready for the first question, message me 'ready'")
                             return 'Message Processed'
                         else:
                             send_message(recipient_id, "message the word 'start' to begin playing!")
@@ -91,17 +91,37 @@ def receive_message():
                     if message['sender']['id'] == gameMaster:
                         if message['message'].get('text') == 'ready':
                             gameStart = True
-                            send_message(gameMaster, 'game is starting!')
+                            send_message(gameMaster, "to get the next question, message 'next'")
 
-                            send_message(participants[n][0], random.choice(thingsQuestions))
+                            send_message(gameMaster, random.choice(thingsQuestions))
 
-                            if n == len(participants)-1:
-                                n = 0
-                                return 'Message Processed'
-                            else:
-                                n += 1
+                            # if n == len(participants)-1:
+                            #     n = 0
+                            #     return 'Message Processed'
+                            # else:
+                            #     n += 1
 
                             return 'Message Processed'
+
+                        elif message['message'].get('text') == 'next':
+                            send_message(gameMaster, random.choice(thingsQuestions))
+
+                            # if n == len(participants)-1:
+                            #     n = 0
+                            #     return 'Message Processed'
+                            # else:
+                            #     n += 1
+
+                            return 'Message Processed'
+
+                        elif  message['message'].get('text') == 'stop':
+                            send_message(participants[n][0], "bye!")
+                            gameStart = False
+                            gameInit = False
+                            participants[:] = []
+                            gameMaster = []
+                            return 'Message Processed'
+
 
                         else:
                             recipient_id = message['sender']['id']
@@ -131,29 +151,29 @@ def receive_message():
             output = request.get_json()
 
 
-            for event in output['entry']:
-                messaging = event['messaging']
+            messaging = output['entry'][-1]['messaging']
 
-                for message in messaging:
+            for message in messaging:
 
-                    if message.get('message'):
-
+                if message.get('message'):
+                    if message['sender']['id'] == gameMaster:
                         if message['message'].get('text') == 'stop':
+                            send_message(gameMaster, "bye!")
                             gameStart = False
                             gameInit = False
                             participants[:] = []
                             gameMaster = []
                             return 'Message Processed'
 
-                        #here is where the game starts
-                    elif message['message'].get('text') == 'next':
-                        send_message(participants[n][0], random.choice(thingsQuestions))
 
-                        if n == len(participants)-1:
-                            n = 0
-                            return 'Message Processed'
-                        else:
-                            n += 1
+                        elif message['message'].get('text') == 'next':
+                            send_message(gameMaster, random.choice(thingsQuestions))
+
+                            # if n == len(participants)-1:
+                            #     n = 0
+                            #     return 'Message Processed'
+                            # else:
+                            #     n += 1
 
                             return 'Message Processed'
 
